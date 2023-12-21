@@ -1,40 +1,51 @@
-import http from "http";
-import fs from "fs";
+import http from 'http';
+import fs from 'fs';
+import path from 'path';
 
-const htmlPath = "./index.html";
-const jsPath = "./index.js";
-const jsonPath = "./index.json";
+const server = http.createServer((req, res) => {
+    if (req.method === 'GET' && req.url === '/') {
+        fs.readFile('./index.html', 'utf8', (err, data) => {
+            if (err) {
+                console.error('Error reading index.html:', err);
+                res.writeHead(500);
+                res.end('Internal Server Error');
+                return;
+            }
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(data);
+        });
+    } else if (req.method === 'POST' && req.url === '/saveData') {
+        let body = '';
+        req.on('data', chunk => {
+            body += chunk;
+        });
 
-const serv = http.createServer((req, res) => {
-  if (req.method === "GET" && req.url === "/") {
-    // Read the join.html file
-    fs.readFile(htmlPath, "utf8", (err, data) => {
-      // Set response header and send the file content
-      res.writeHead(200, { "Content-Type": "text/html" });
-      res.end(data);
-    });
-  } else if (req.method === "POST" && req.url === "/saveData") {
-    const id = document.getElementById("inputid").value;
-    const pw = document.getElementById("inputpw").value;
-    const mail = document.getElementById("inputmail").value;
-    // JSON 형식으로 변환
-    const userData = {
-      id: id,
-      pw: pw,
-      mail: mail,
-    };
-    // 서버에 데이터 전송
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/saveData", true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(JSON.stringify(userData));
-  }
+        req.on('end', () => {
+            try {
+                const userData = JSON.parse(body);
+                fs.writeFile('./index.json', JSON.stringify(userData, null, 2), err => {
+                    if (err) {
+                        console.error('Error writing to index.json:', err);
+                        res.writeHead(500);
+                        res.end('Internal Server Error');
+                        return;
+                    }
+                    res.writeHead(200);
+                    res.end('Data saved successfully');
+                });
+            } catch (parseError) {
+                console.error('Error parsing JSON:', parseError);
+                res.writeHead(400);
+                res.end('Bad Request');
+            }
+        });
+    } else {
+        res.writeHead(404);
+        res.end('Not Found');
+    }
 });
 
-// Define port number
-const port = 3217;
-
-// Start the server
-serv.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+const PORT = 3111;
+server.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });

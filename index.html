@@ -1,20 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
 </head>
 <body>
-  <div id="root">
-    <form id="signUp" action="/saveData">
-      <input type="text" name="inputid" id="inputid" placeholder="input id" required><br>
-      <input type="text" name="inputpw" id="inputpw" placeholder="input pw" required><br>
-      <input type="text" name="checkpw" id="checkpw" placeholder="check pw" required><br>
-      <input type="text" name="inputmail" id="inputmail" placeholder="input mail" required><br>
-      <button type="button">submit</button>
-    </form>
-  </div>
-  <script src="index.js"></script>
+    <div id="root">
+        <form id="signup-form">
+            <input type="text" id="username" placeholder="사용자 이름" required><br>
+            <input type="email" id="email" placeholder="이메일" required><br>
+            <input type="password" id="password" placeholder="비밀번호" required><br>
+            <button type="submit">가입하기</button>
+        </form>
+    </div>
+    <script src="xhr.js"></script>
 </body>
 </html>
